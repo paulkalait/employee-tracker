@@ -1,197 +1,209 @@
-const mysql = require('mysql2')
-const inquirer = require('inquirer')
-const {printTable} = require("console-table-printer")
+const mysql = require("mysql2");
+const inquirer = require("inquirer");
+const { printTable } = require("console-table-printer");
 
-let roles; 
+let roles;
 let employees;
 
-
-
-
 const db = mysql.createConnection(
-    {
-        host: 'localhost',
-        // your MYSQL Username
-        user: 'root',
-        // password
-        password: '',
-        database: 'employees'
-    },
-    console.log('Connected to the employees database!')
-)
+  {
+    host: "localhost",
+    // your MYSQL Username
+    user: "root",
+    // password
+    password: "",
+    database: "employees",
+  },
+  console.log("Connected to the employees database!")
+);
 const viewAllEmployees = () => {
-    db.query('SELECT * FROM employee', function (err, results) {
-        printTable(results);
-        promptChoices();
-      });
-}
+  db.query("SELECT * FROM employee", function (err, results) {
+    printTable(results);
+    promptChoices();
+  });
+};
 
 const viewAllDepartments = () => {
-    db.query('SELECT * FROM department', function (err, results) {
-        printTable(results);
-        promptChoices();
-      });
-}
+  db.query("SELECT * FROM department", function (err, results) {
+    printTable(results);
+    promptChoices();
+  });
+};
 
 const viewAllRoles = () => {
-    db.query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id', function (err, results) {
-        printTable(results);
-        promptChoices();
-      });
-}
+  db.query(
+    "SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id",
+    function (err, results) {
+      printTable(results);
+      promptChoices();
+    }
+  );
+};
 const getAllRoles = () => {
-    return db.promise().query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id' )
-    
-}
+  return db
+    .promise()
+    .query(
+      "SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id"
+    );
+};
 getAllRoles().then((results) => {
-    roles = results[0]
-})
+  roles = results[0];
+});
 const getAllEmployees = () => {
-    return db.promise().query('SELECT * FROM employee;' )
-}
+  return db.promise().query("SELECT * FROM employee;");
+};
 getAllEmployees().then((results) => {
-    employees = results[0]
-})
+  employees = results[0];
+});
 
-
-//use insert for the add functiions 
+//use insert for the add functiions
 const addEmployee = () => {
-    //prompt user with department
-   
+  //prompt user with department
 
-    let firstname;
-    let lastname;
+  let firstname;
+  let lastname;
 
-    inquirer.prompt([{
+  inquirer
+    .prompt([
+      {
         type: "input",
         name: "firstname",
-        message: "What is the employee's first name?"
-    },
-    {
+        message: "What is the employee's first name?",
+      },
+      {
         type: "input",
         name: "lastname",
-        message: "What is the employee's last name?"
-    },
+        message: "What is the employee's last name?",
+      },
     ])
-   
-    .then(answers => { 
 
-        firstname = answers.firstname
-        lastname = answers.lastname
-       
+    .then((answers) => {
+      firstname = answers.firstname;
+      lastname = answers.lastname;
 
-        
-        db.promise().query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id' )
-     
-    
-        
-        let rolesChoices = roles.map(({id,title}) => ({
-                    name: title,
-                    value: id
-                }))
-            inquirer.prompt([{
-                type: "list",
-                name: "roleid",
-                message: "What is your employee role",
-                choices: rolesChoices
-            }])
-            .then((response) => {
-                let roleid = response.roleid;
-                // viewAllEmployees().then(([rows]) => {
-                //     let employees = rows
-                    const managerChoices = employees.map(({id, first_name, last_name}) =>({
-                        name: `${first_name}${last_name}`,
-                        value: id,
-                    }))
-                    managerChoices.unshift({
-                        name: "None",
-                        value: null
-                    })
-                    inquirer.prompt([{
-                        type: "list",
-                        name: "managerid",
-                        message: "Who is the employee's manager",
-                        choices: managerChoices
-                    }])
-                    .then((response) => {
-                        let employee = {
-                            first_name: firstname,
-                            last_name: lastname,
-                            role_id: roleid,
-                            manager_id: response.managerid
-                        }
-                        const sql = (`INSERT INTO employee SET ?`);
-                        db.query(sql, employee, (err, result) => {
-                            console.log(result)
-                        })
-                    })
-                    .then(() => {
-                        console.log(`EMPLOYEE ${firstname} ${lastname} ADD TO DATABASE`)
-                    })
-                    .then(() => 
-                    promptChoices()
-                    )
-                })
+      db.promise().query(
+        "SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id"
+      );
+
+      let rolesChoices = roles.map(({ id, title }) => ({
+        name: title,
+        value: id,
+      }));
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "roleid",
+            message: "What is your employee role",
+            choices: rolesChoices,
+          },
+        ])
+        .then((response) => {
+          let roleid = response.roleid;
+          // viewAllEmployees().then(([rows]) => {
+          //     let employees = rows
+          const managerChoices = employees.map(
+            ({ id, first_name, last_name }) => ({
+              name: `${first_name}${last_name}`,
+              value: id,
             })
-    
-        }
+          );
+          managerChoices.unshift({
+            name: "None",
+            value: null,
+          });
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "managerid",
+                message: "Who is the employee's manager",
+                choices: managerChoices,
+              },
+            ])
+            .then((response) => {
+              let employee = {
+                first_name: firstname,
+                last_name: lastname,
+                role_id: roleid,
+                manager_id: response.managerid,
+              };
+              const sql = `INSERT INTO employee SET ?`;
+              db.query(sql, employee, (err, result) => {
+                console.log(result);
+              });
+            })
+            .then(() => {
+              console.log(`EMPLOYEE ${firstname} ${lastname} ADD TO DATABASE`);
+            })
+            .then(() => promptChoices());
+        });
+    });
+};
 
-       
-
-
-
-// Prompt user 
-const promptChoices = () => {
-    inquirer.prompt([
-        {
-            name: 'choices',
-            type: 'list',
-            message: 'Please choose an option',
-            choices: [
-                "View all employees",
-                "View all department",
-                "View all roles",
-                "Add a department",
-                "Add a Role",
-                "Add an Employee",
-                "Update Employee Role",
-                "None"
-            ]
-        }
-    ])
-    .then(
-        res => {
-            console.log(res)
-            let userInput = res.choices
-            if(userInput === "View all employees"){
-                viewAllEmployees()
-            }
-            else if(userInput === "View all department"){
-                viewAllDepartments();
-            }
-            else if(userInput === "View all roles"){
-                viewAllRoles();
-            }
-            else if(userInput === "Add a department"){
-                // addDepartment();
-            }
-            else if(userInput === "Add a Role"){
-                // addRole();
-            }
-            else if(userInput === "Add an Employee"){
-                addEmployee();
-            }
-            else if(userInput === "Update Employee Role"){
-                // updateEmployee();
-            }
-            else if(userInput === "None"){
-                // None();
-            }
-        })
+//Add a department
+const addDepartment = () => {
+  inquirer.prompt([
+    {
+      name: 'addDepartment',
+      type: 'input',
+      message: 'What is the name of the new Department'
+    }
+  ])
+  .then((answers) => {
+    let sql = 'INSERT INTO department (department_name) VALUES (?)'
+    db.query(sql, answers.addDepartment, (err, response) => {
+      if(err) throw err;
+      console.log(response)
+      viewAllDepartments();
+    }
+    )
+  })
 }
+// Add department function ends 
 
+
+// Prompt user
+const promptChoices = () => {
+  inquirer
+    .prompt([
+      {
+        name: "choices",
+        type: "list",
+        message: "Please choose an option",
+        choices: [
+          "View all employees",
+          "View all department",
+          "View all roles",
+          "Add a department",
+          "Add a Role",
+          "Add an Employee",
+          "Update Employee Role",
+          "None",
+        ],
+      },
+    ])
+    .then((res) => {
+      console.log(res);
+      let userInput = res.choices;
+      if (userInput === "View all employees") {
+        viewAllEmployees();
+      } else if (userInput === "View all department") {
+        viewAllDepartments();
+      } else if (userInput === "View all roles") {
+        viewAllRoles();
+      } else if (userInput === "Add a department") {
+        addDepartment();
+      } else if (userInput === "Add a Role") {
+        // addRole();
+      } else if (userInput === "Add an Employee") {
+        addEmployee();
+      } else if (userInput === "Update Employee Role") {
+        // updateEmployee();
+      } else if (userInput === "None") {
+        // None();
+      }
+    });
+};
 
 promptChoices();
-
-
-
