@@ -35,6 +35,22 @@ const viewAllRoles = () => {
 }
 
 //use insert for the add functiions 
+const addEmployee = () => {
+    //prompt user with department
+    inquirer.prompt([{
+        type: "input",
+        name: "firstname",
+        message: "What is the employee's first name?"
+    },
+    {
+        type: "input",
+        name: "lastname",
+        message: "What is the employee's last name?"
+    },
+    ])
+    .then(answers => {
+    })
+}
 
 
 
