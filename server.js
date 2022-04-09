@@ -165,6 +165,37 @@ const addDepartment = () => {
 }
 // Add department function ends 
 
+// Add a Role 
+const addRole = () => {
+  inquirer.prompt([
+    {
+      name:"addRole",
+      type: 'input',
+      message: "What is the name of the new Role"
+    },
+    {
+      name: "addSalary",
+      type: "input",
+      message: 'Please enter salary amount'
+    },
+    {
+      name: "addDepartment",
+      type: 'list',
+      message: 'Enter a department. Enter 1 for Engineering, 2 for Accounting, 3 for Sales, and 4 for Legal',
+      choices: [1,2,3,4]
+    }
+  ])
+  .then((answers) => {
+    const sql = 'INSERT INTO role (role.title, role.salary, role.department_id) VALUES (?,?,?)'
+    params = [answers.addRole, answers.addSalary, answers.addDepartment]
+    db.query(sql, params, (err, response) => {
+      if(err) throw err;
+      console.log(response)
+      viewAllRoles();
+    })
+  })
+}
+
 
 //update employee
 const updateEmployee = () => {
@@ -256,7 +287,7 @@ const promptChoices = () => {
       } else if (userInput === "Add a department") {
         addDepartment();
       } else if (userInput === "Add a Role") {
-        // addRole();
+        addRole();
       } else if (userInput === "Add an Employee") {
         addEmployee();
       } else if (userInput === "Update Employee Role") {
