@@ -20,6 +20,7 @@ const db = mysql.createConnection(
 );
 const viewAllEmployees = () => {
   db.query("SELECT * FROM employee", function (err, results) {
+    if(err) throw err
     printTable(results);
     promptChoices();
   });
@@ -27,6 +28,7 @@ const viewAllEmployees = () => {
 
 const viewAllDepartments = () => {
   db.query("SELECT * FROM department", function (err, results) {
+    if(err) throw err
     printTable(results);
     promptChoices();
   });
@@ -181,6 +183,7 @@ const addRole = () => {
     {
       name: "addDepartment",
       type: 'list',
+      // references the department keys
       message: 'Enter a department. Enter 1 for Engineering, 2 for Accounting, 3 for Sales, and 4 for Legal',
       choices: [1,2,3,4]
     }
