@@ -2,6 +2,12 @@ const mysql = require('mysql2')
 const inquirer = require('inquirer')
 const {printTable} = require("console-table-printer")
 
+let roles; 
+let employees;
+
+
+
+
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -33,10 +39,29 @@ const viewAllRoles = () => {
         promptChoices();
       });
 }
+const getAllRoles = () => {
+    return db.promise().query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id' )
+    
+}
+getAllRoles().then((results) => {
+    roles = results[0]
+})
+const getAllEmployees = () => {
+    return db.promise().query('SELECT * FROM employee;' )
+}
+getAllEmployees().then((results) => {
+    employees = results[0]
+})
+
 
 //use insert for the add functiions 
 const addEmployee = () => {
     //prompt user with department
+   
+
+    let firstname;
+    let lastname;
+
     inquirer.prompt([{
         type: "input",
         name: "firstname",
@@ -48,10 +73,70 @@ const addEmployee = () => {
         message: "What is the employee's last name?"
     },
     ])
-    .then(answers => {
-    })
-}
+   
+    .then(answers => { 
 
+        firstname = answers.firstname
+        lastname = answers.lastname
+       
+
+        
+        db.promise().query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id' )
+     
+    
+        
+        let rolesChoices = roles.map(({id,title}) => ({
+                    name: title,
+                    value: id
+                }))
+            inquirer.prompt([{
+                type: "list",
+                name: "roleid",
+                message: "What is your employee role",
+                choices: rolesChoices
+            }])
+            .then((response) => {
+                let roleid = response.roleid;
+                // viewAllEmployees().then(([rows]) => {
+                //     let employees = rows
+                    const managerChoices = employees.map(({id, first_name, last_name}) =>({
+                        name: `${first_name}${last_name}`,
+                        value: id,
+                    }))
+                    managerChoices.unshift({
+                        name: "None",
+                        value: null
+                    })
+                    inquirer.prompt([{
+                        type: "list",
+                        name: "managerid",
+                        message: "Who is the employee's manager",
+                        choices: managerChoices
+                    }])
+                    .then((response) => {
+                        let employee = {
+                            first_name: firstname,
+                            last_name: lastname,
+                            role_id: roleid,
+                            manager_id: response.managerid
+                        }
+                        const sql = (`INSERT INTO employee SET ?`);
+                        db.query(sql, employee, (err, result) => {
+                            console.log(result)
+                        })
+                    })
+                    .then(() => {
+                        console.log(`EMPLOYEE ${firstname} ${lastname} ADD TO DATABASE`)
+                    })
+                    .then(() => 
+                    promptChoices()
+                    )
+                })
+            })
+    
+        }
+
+       
 
 
 
@@ -94,7 +179,7 @@ const promptChoices = () => {
                 // addRole();
             }
             else if(userInput === "Add an Employee"){
-                // addEmployee();
+                addEmployee();
             }
             else if(userInput === "Update Employee Role"){
                 // updateEmployee();
