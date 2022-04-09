@@ -132,11 +132,12 @@ const addEmployee = () => {
               };
               const sql = `INSERT INTO employee SET ?`;
               db.query(sql, employee, (err, result) => {
+                if(err) throw err;
                 console.log(result);
               });
             })
             .then(() => {
-              console.log(`EMPLOYEE ${firstname} ${lastname} ADD TO DATABASE`);
+              console.log(`EMPLOYEE ${firstname} ${lastname} ADDED TO DATABASE`);
             })
             .then(() => promptChoices());
         });
@@ -163,6 +164,7 @@ const addDepartment = () => {
   })
 }
 // Add department function ends 
+
 
 //update employee
 const updateEmployee = () => {
@@ -208,16 +210,17 @@ const updateEmployee = () => {
 
     let sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ? '
     params = [newTitle, newEmployeeId]
-    db.query(sql, params, (err) => {
+    db.query(sql, params, (err, result) => {
       if(err) throw err
-      console.log("employee role successfully updated")
+      console.log(result)
       promptChoices();
     })
+    
   })
   })
   })}
   
-  
+
   
 
 
