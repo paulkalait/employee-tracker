@@ -194,7 +194,7 @@ const addRole = () => {
     db.query(sql, params, (err, response) => {
       if(err) throw err;
       console.log(response)
-      viewAllRoles();
+      promptChoices();
     })
   })
 }
