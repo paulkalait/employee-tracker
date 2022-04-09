@@ -1,5 +1,6 @@
 const mysql = require('mysql2')
 const inquirer = require('inquirer')
+const {printTable} = require("console-table-printer")
 
 const db = mysql.createConnection(
     {
@@ -12,6 +13,31 @@ const db = mysql.createConnection(
     },
     console.log('Connected to the employees database!')
 )
+const viewAllEmployees = () => {
+    db.query('SELECT * FROM employee', function (err, results) {
+        printTable(results);
+        promptChoices();
+      });
+}
+
+const viewAllDepartments = () => {
+    db.query('SELECT * FROM department', function (err, results) {
+        printTable(results);
+        promptChoices();
+      });
+}
+
+const viewAllRoles = () => {
+    db.query('SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON role.department_id = department.id', function (err, results) {
+        printTable(results);
+        promptChoices();
+      });
+}
+
+//use insert for the add functiions 
+
+
+
 
 // Prompt user 
 const promptChoices = () => {
@@ -22,7 +48,7 @@ const promptChoices = () => {
             message: 'Please choose an option',
             choices: [
                 "View all employees",
-                "View all deparment",
+                "View all department",
                 "View all roles",
                 "Add a department",
                 "Add a Role",
@@ -32,4 +58,39 @@ const promptChoices = () => {
             ]
         }
     ])
+    .then(
+        res => {
+            console.log(res)
+            let userInput = res.choices
+            if(userInput === "View all employees"){
+                viewAllEmployees()
+            }
+            else if(userInput === "View all department"){
+                viewAllDepartments();
+            }
+            else if(userInput === "View all roles"){
+                viewAllRoles();
+            }
+            else if(userInput === "Add a department"){
+                // addDepartment();
+            }
+            else if(userInput === "Add a Role"){
+                // addRole();
+            }
+            else if(userInput === "Add an Employee"){
+                // addEmployee();
+            }
+            else if(userInput === "Update Employee Role"){
+                // updateEmployee();
+            }
+            else if(userInput === "None"){
+                // None();
+            }
+        })
 }
+
+
+promptChoices();
+
+
+
