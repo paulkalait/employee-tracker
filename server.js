@@ -4,6 +4,8 @@ const { printTable } = require("console-table-printer");
 
 let roles;
 let employees;
+let newTitle;
+let newEmployeeId;
 
 const db = mysql.createConnection(
   {
@@ -151,7 +153,7 @@ const addDepartment = () => {
     }
   ])
   .then((answers) => {
-    let sql = 'INSERT INTO department (department_name) VALUES (?)'
+    const sql = 'INSERT INTO department (department_name) VALUES (?)'
     db.query(sql, answers.addDepartment, (err, response) => {
       if(err) throw err;
       console.log(response)
@@ -161,6 +163,62 @@ const addDepartment = () => {
   })
 }
 // Add department function ends 
+
+//update employee
+const updateEmployee = () => {
+                // from schema
+  let sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id'
+  db.query(sql, (err, response) => {
+    if(err) throw err;
+    let employeesArr = []
+    response.forEach((employee) => {employeesArr.push(`${employee.first_name}${employee.last_name}`)})
+      // selecting role id and role title from role table
+  let sql = 'SELECT role.id, role.title FROM role'
+  db.query(sql, (err, response) => {
+    if(err) throw err;
+    let rolesArr = []
+    response.forEach((role) => {rolesArr.push(role.title)})
+
+    inquirer.prompt([
+      {
+      name: 'selectedEmployee',
+      type: 'list',
+      message: "Which employee's role is being updated",
+      choices: employeesArr
+    },
+    {
+      name: 'selectedRole',
+      type: 'list',
+      message: "please select their new role",
+      choices: rolesArr
+    }
+  ])
+  .then((answers) => {
+
+    response.forEach((role) => {
+      if(answers.selectedRole == role.title){
+        newTitle = role.id
+      }
+    })
+    response.forEach((employee) => {
+      if(answers.selectedEmployee == `${employee.firstname}${employee.lastname}`){
+        newEmployeeId = employee.id
+      }
+    })
+
+    let sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ? '
+    params = [newTitle, newEmployeeId]
+    db.query(sql, params, (err) => {
+      if(err) throw err
+      console.log("employee role successfully updated")
+      promptChoices();
+    })
+  })
+  })
+  })}
+  
+  
+  
 
 
 // Prompt user
@@ -199,9 +257,10 @@ const promptChoices = () => {
       } else if (userInput === "Add an Employee") {
         addEmployee();
       } else if (userInput === "Update Employee Role") {
-        // updateEmployee();
+        updateEmployee();
       } else if (userInput === "None") {
-        // None();
+        //end sql connection
+        db.end()
       }
     });
 };
