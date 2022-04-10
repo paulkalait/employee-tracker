@@ -4,8 +4,7 @@ const { printTable } = require("console-table-printer");
 
 let roles;
 let employees;
-let newTitle;
-let newEmployeeId;
+
 
 //establish connection to mysql server
 const db = mysql.createConnection(
@@ -203,12 +202,22 @@ const addRole = () => {
 
 //update employee
 const updateEmployee = () => {
+
+  let newTitle;
+  let newEmployeeId;
                 // from schema
   let sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id'
   db.query(sql, (err, response) => {
     if(err) throw err;
     let employeesArr = []
     response.forEach((employee) => {employeesArr.push(`${employee.first_name}${employee.last_name}`)})
+   
+    let sqlEmployee = `SELECT employee.id, employee.first_name, employee.last_name from employee`
+    db.query(sqlEmployee, (err, response) => {
+      if(err) throw err
+      console.log(response)
+    })
+
       // selecting role id and role title from role table
   let sql = 'SELECT role.id, role.title FROM role'
   db.query(sql, (err, response) => {
@@ -240,12 +249,14 @@ const updateEmployee = () => {
   
     })
     response.forEach((employee) => {
-      if(answers.selectedEmployee == `${employee.firstname}${employee.lastname}`){
+      if(answers.selectedEmployee == `${employee.first_name}${employee.last_name}`){
         
         newEmployeeId = employee.id
       }
     })
 
+ 
+    
     let sql = 'UPDATE employee SET employee.role_id = ? WHERE employee.id = ? '
     params = [newTitle, newEmployeeId]
     db.query(sql, params, (err, result) => {
@@ -253,7 +264,6 @@ const updateEmployee = () => {
       console.log(result)
       promptChoices();
     })
-    
   })
   })
   })}
@@ -307,3 +317,6 @@ const promptChoices = () => {
 };
 
 promptChoices();
+
+
+
