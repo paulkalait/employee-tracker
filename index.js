@@ -206,17 +206,13 @@ const updateEmployee = () => {
   let newTitle;
   let newEmployeeId;
                 // from schema
-  let sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.id AS "role_id" FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id'
+  let sql = 'SELECT employee.id, employee.first_name, employee.last_name FROM employee'
   db.query(sql, (err, response) => {
     if(err) throw err;
     let employeesArr = []
     response.forEach((employee) => {employeesArr.push(`${employee.first_name}${employee.last_name}`)})
    
-    let sqlEmployee = `SELECT employee.id, employee.first_name, employee.last_name from employee`
-    db.query(sqlEmployee, (err, response) => {
-      if(err) throw err
-      console.log(response)
-    })
+   
 
       // selecting role id and role title from role table
   let sql = 'SELECT role.id, role.title FROM role'
