@@ -1,11 +1,13 @@
 
 # employee-tracker
 
+  ![Badge](https://img.shields.io/badge/licence-MIT-blue)
+
   ![Screenshot](img/welcome.png)
-youtube video (walk through): https://drive.google.com/file/d/1SDL_HQ4jH4eF8VQvUx0gRcrX7w-ZCXjn/view
 
+## Link:
+ https://drive.google.com/file/d/1SDL_HQ4jH4eF8VQvUx0gRcrX7w-ZCXjn/view
 
-  ![Badge](https://img.shields.io/badge/licence--blue)
   ## Description
   This project was to use inquirer and mysql to create an employee database. I used the inquirer prompt and db.query to create my functions. the functions hold the db.query and with the db.query i can then manipulate the sql database with the query response.
 
