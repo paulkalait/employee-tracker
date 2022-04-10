@@ -7,6 +7,7 @@ let employees;
 let newTitle;
 let newEmployeeId;
 
+//establish connection to mysql server
 const db = mysql.createConnection(
   {
     host: "localhost",
@@ -235,9 +236,11 @@ const updateEmployee = () => {
       if(answers.selectedRole == role.title){
         newTitle = role.id
       }
+  
     })
     response.forEach((employee) => {
       if(answers.selectedEmployee == `${employee.firstname}${employee.lastname}`){
+        
         newEmployeeId = employee.id
       }
     })
