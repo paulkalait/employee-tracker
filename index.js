@@ -214,6 +214,7 @@ const updateEmployee = () => {
   db.query(sql, (err, response) => {
     if(err) throw err;
     let rolesArr = []
+    // push the role table 'title' row values into the rolesArr -> insert the array into the prompts for 'choices'
     response.forEach((role) => {rolesArr.push(role.title)})
 
     inquirer.prompt([
