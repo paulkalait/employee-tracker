@@ -206,8 +206,7 @@ const addRole = () => {
 //update employee
 const updateEmployee = () => {
   let response2;
-  let newTitle;
-  let newEmployeeId;
+
   // from schema
   let sql =
     "SELECT employee.id, employee.first_name, employee.last_name FROM employee";
