@@ -2,6 +2,9 @@ const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const { printTable } = require("console-table-printer");
 
+
+// const chalk = require('chalk')
+
 let roles;
 let employees;
 
@@ -15,8 +18,16 @@ const db = mysql.createConnection(
     password: "",
     database: "employees",
   },
-  console.log("Connected to the employees database!")
+  
 );
+
+console.log('======================================================================')
+console.log(" ")
+ console.log('EMPLOYEE DATABASE')
+ console.log(" ")
+console.log('======================================================================')
+
+
 const viewAllEmployees = () => {
   db.query("SELECT * FROM employee", function (err, results) {
     if (err) throw err;
