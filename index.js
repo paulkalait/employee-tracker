@@ -21,11 +21,9 @@ const db = mysql.createConnection(
   
 );
 
-console.log('======================================================================')
-console.log(" ")
- console.log('EMPLOYEE DATABASE')
- console.log(" ")
-console.log('======================================================================')
+console.table(
+  "\n----------- EMPLOYEE TRACKER -----------\n"
+)
 
 
 const viewAllEmployees = () => {

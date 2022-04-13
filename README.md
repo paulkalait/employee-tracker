@@ -18,17 +18,18 @@
   * [Contributing](#contributing)
   * [Questions](#questions)
 
-  ## installation
+  ## Installation
   Must install inquirer by running npm install inquirer, install mysql to have access to the "db.query" and install console-table-printer to use printTable rather than console.logging the tables,
 
   
   ## License 
   This project is license under 
+  
 
   ## Contributing
   This project was required to establish an sql connection. In order to contribute to this project, the user must enter their password after a mysql -u root -p.
 
-  ## Tests
+  ## 🧪 Tests
   node index 
 
   ## Questions
